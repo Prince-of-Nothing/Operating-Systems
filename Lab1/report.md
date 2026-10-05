@@ -2,8 +2,7 @@
 ### Course: Operating Systems
 ### Author: Pleșu Dinu FAF-241
 ## Theory
-
-The following commands are used in this lab (brief description):
+The following commands are used in this lab:
 
 - mkdir -p DIR: create DIR and parent directories if needed.
 - cd DIR: change current directory to DIR.
@@ -27,21 +26,6 @@ The following commands are used in this lab (brief description):
 - top: interactive process and system monitor.
 - sleep N &: run sleep in background; '&' submits a job to the background.
 - jobs: list current shell background jobs.
-- kill PID: send SIGTERM (by default) to process PID.
-- $!: shell variable containing PID of last background process.
-- ls /proc/$PID/: list kernel-exposed information for process PID.
-- cat /proc/$PID/status: print process status and resource usage.
-- free -h: show memory and swap usage in human-readable format.
-- cat /proc/meminfo: show detailed memory information from kernel.
-- grep VmRSS /proc/$PID/status: extract resident set size (physical RAM) of a process.
-- df -h: report filesystem disk space usage in human-readable form.
-- lsblk: list block devices (disks, partitions) and their mountpoints.
-- du -sh PATH: show disk usage of PATH in a human-readable summary.
-- ls -l /dev | head: list device entries and show first lines.
-- mount: show currently mounted filesystems and options.
-- Pipes (|): send stdout of one command to stdin of the next.
-- Redirection (>): redirect stdout to a file (overwrite).
-- &&: shell operator to run next command only if previous succeeds.
 
 ## Initial setup
 ```bash
