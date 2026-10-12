@@ -7,14 +7,7 @@ make qemu
 ```
 ## Part 2. Use xv6 as the Unix it is
 
-
-### Observations
-
-PID 1 on my system was `systemd`, which is the main system manager started during boot. `ps aux | wc -l` gave roughly 370 running processes, although the exact number changed between runs. The `sleep` process had the state `S (sleeping)`, which made sense because it was waiting instead of actively using the CPU. This part showed how the OS keeps track of processes, assigns PIDs and exposes process information through `/proc` directories.
-
-### Observe
-
-1. Three programs xv6 ships with: `ls`, `cat`, `grep`.
+1. Three programs xv6 ships with: `echo`, `cat`, `console`.
 
 2. For a pipe to work, two OS features must exist: (a) process creation, so the kernel can run the two ends of the pipe as separate processes (via `fork`); and (b) an inter-process communication mechanism, where the kernel keeps a shared buffer accessible through file descriptors so one process's `write` can be read by the other process via `read`.
 
@@ -22,53 +15,7 @@ PID 1 on my system was `systemd`, which is the main system manager started durin
 
 ## Part 3 — Memory
 
-```bash
-free -h
-cat /proc/meminfo | head -6
-```
-
-Output:
-
-```text
-sleep 300 & PID=$!
-grep VmRSS /proc/$PID/status # real RAM used by this process
-kill $PID
-               total        used        free      shared  buff/cache   available
-Mem:           7.2Gi       1.6Gi       4.0Gi        41Mi       1.9Gi       5.6Gi
-Swap:             0B          0B          0B
-MemTotal:        7598072 kB
-MemFree:         4184516 kB
-MemAvailable:    5877904 kB
-Buffers:           51672 kB
-Cached:          1872036 kB
-SwapCached:            0 kB
-[1] 13599
-VmRSS:	     912 kB
-[1]+  Terminated                 sleep 300
-```
-
-`free -h` gave a readable summary of RAM and swap. `/proc/meminfo` showed the same information in more detail. I noticed that `free` memory was roughly 2/3  of the `available` memory because Linux was using some RAM for cache that could be reused when needed.
-
-```bash
-sleep 300 & PID=$!
-grep VmRSS /proc/$PID/status
-kill $PID
-```
-
-Output:
-
-```text
-[1] 13632
-VmRSS:	     204 kB
-[1]+  Terminated                 sleep 300
-```
-
-`VmRSS` showed how much physical RAM was resident for the process. Even a simple sleeping process still used several megabytes for its executable, libraries, stack and other mappings.
-
-### Observations
-
-The VM had about 7.2 GiB of RAM. Around 4 GiB was completely free at one point, but much more was still available because cached memory can be reassigned. No swap was configured, so the swap size was `0B`. The `sleep` process used about 0.2 MB of resident memory, which was more than I thought considering that Nasa's space shuttle ran on only one MB of RAM. 
-
+While analysing cat.c, I have noticed that the c program makes numerous system calls, including read() - gets user input, exit() - ends the program with a status, write() - writes to the output stream, open() - opens a file and close() - closes a file. The sys_read returns a uint64 and is defined in kernel/sysfile.c, on line 68. The files in the kernel define the instructions that the kernel is able to do, and how it does them, while the files defined in user allow the user to interact with the kernel's implemented behavior using programs.
 ## Part 4 — Devices and storage
 
 ```bash
